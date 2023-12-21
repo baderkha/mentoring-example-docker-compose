@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  go_server:
+    restart : always
+    image: go_example_webserver:latest
+    ports:
+      - "8082:8082"
+    environment:
+      DB_CONNECT_STRING: 'root:password@tcp(db_mysql:3306)/mysql'
+    networks:
+      - backend
+    depends_on:
+      - db_mysql
+
+  db_mysql:
+    volumes:
+      - $HOME/.test-db:/var/lib/mysql
+      - ./db2/mysql/:/etc/mysql/conf.d
+    networks:
+      - backend
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: 'main'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'youvisit'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'password'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'password'
+
+networks:
+  backend:
+
+# HOMEWORK 
+# MOVE YOUR DB TO USING POSTGRES OR MYSQL 
+# USE DOCKER COMPOSE IN YOUR FLASK APPLICATION
+# 1 SERVICE (WEBSERVER)
+# 2ND SERVICE (MYSQL/POSTGRES) DB
